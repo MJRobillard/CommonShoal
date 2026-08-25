@@ -10,16 +10,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F3EEE2;
-    --paper-line:#D9CFB6;
-    --ink:#1C2321;
+    --paper:#E9F1F6;
+    --paper-line:#C6D3DD;
+    --ink:#131C22;
     --navy-deep:#0E2530;
     --sand:#D9BD8C;
     --sand-strong:#C79D5E;
-    --buoy:#B8552E;
+    --buoy:#1D63C9;
     --depth:#2F6E68;
-    --muted:#5B6560;
-    --danger:#B8552E;
+    --muted:#57616B;
+    --danger:#C23B3B;
   }
   *{box-sizing:border-box;}
   body{
@@ -279,7 +279,7 @@
       polygon: {
         allowIntersection: false,
         showArea: true,
-        shapeOptions: { color: '#B8552E', weight: 2, fillColor: '#D9BD8C', fillOpacity: 0.5 }
+        shapeOptions: { color: '#1D63C9', weight: 2, fillColor: '#D9BD8C', fillOpacity: 0.5 }
       },
       polyline: false,
       rectangle: false,
@@ -421,7 +421,7 @@
     fc.features.forEach(function(feature){
       if(!feature.geometry || feature.geometry.type !== 'Polygon') return;
       var latlngs = feature.geometry.coordinates[0].map(function(c){ return L.latLng(c[1], c[0]); });
-      var layer = L.polygon(latlngs, { color:'#B8552E', weight:2, fillColor:'#D9BD8C', fillOpacity:0.5 });
+      var layer = L.polygon(latlngs, { color:'#1D63C9', weight:2, fillColor:'#D9BD8C', fillOpacity:0.5 });
       layer.feature = { type:'Feature', properties: feature.properties || {} };
       if(layer.feature.properties.name){ layer.bindTooltip(layer.feature.properties.name, {permanent:false}); }
       drawnItems.addLayer(layer);
