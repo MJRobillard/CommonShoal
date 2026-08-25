@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Common Shoal — how claiming works</title>
+<title>Common Shoal: how claiming works</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -123,7 +123,7 @@
 <body>
 
 <div class="title">Small beats sprawling</div>
-<div class="subtitle">Same rule, both directions. A tighter loop always keeps the ground it overlaps — whether it's traced first or second, and whether it's carving in or being carved around.</div>
+<div class="subtitle">Same rule, both directions. A tighter loop always keeps the ground it overlaps, whether it's traced first or second, and whether it's carving in or being carved around.</div>
 
 <div class="stage-row">
 
@@ -167,7 +167,7 @@
 <script>
 const NS = "http://www.w3.org/2000/svg";
 
-// Flat shoelace area — these are illustration coordinates on a fixed
+// Flat shoelace area: these are illustration coordinates on a fixed
 // canvas, not geographic ones, so this (not turf.area) is the right tool
 // for the "how much ground" captions.
 function flatArea(points){
@@ -259,14 +259,14 @@ function makeStage(config){
       incomingFill.setAttribute("fill-opacity", "0.55");
       var pct = Math.round((incomingArea / existingArea) * 100);
       statusEl.textContent = "Carved";
-      captionEl.innerHTML = "<strong>" + pct + "%</strong> of John's claim is now Bob's — traced tighter, so it holds, at reduced points for overlapping ground already claimed.";
+      captionEl.innerHTML = "<strong>" + pct + "%</strong> of John's claim is now Bob's, traced tighter, so it holds, at reduced points for overlapping ground already claimed.";
     } else {
       var diffed2 = turf.difference(incomingPoly, existingPoly);
       incomingFill.setAttribute("d", geomToPathD(diffed2 ? diffed2.geometry : null));
       incomingFill.setAttribute("fill-opacity", "0.55");
       var kept = Math.round((existingArea / incomingArea) * 100);
       statusEl.textContent = "Blocked";
-      captionEl.innerHTML = "The wide loop claims the open water around Bob's patch, but can't touch it — <strong>" + kept + "%</strong> of the loop's own area sits inside ground it was never allowed to take.";
+      captionEl.innerHTML = "The wide loop claims the open water around Bob's patch, but can't touch it. <strong>" + kept + "%</strong> of the loop's own area sits inside ground it was never allowed to take.";
     }
   }
 
@@ -334,7 +334,7 @@ makeStage({
 });
 
 // Stage B: Bob's small claim already sits here; John traces a wide loop
-// around it — the loop takes the open water, never Bob's ground.
+// around it. The loop takes the open water, never Bob's ground.
 makeStage({
   svgId: "svg-b", statusId: "status-b", captionId: "caption-b",
   existingPoints: [[230,120],[265,135],[275,175],[245,205],[200,195],[190,155],[210,125],[230,120]],

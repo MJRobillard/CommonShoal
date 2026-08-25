@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Common Shoal — draw &amp; export sandbar shapes</title>
+<title>Common Shoal: draw &amp; export sandbar shapes</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -229,7 +229,7 @@
 <main>
   <div>
     <h1>Outline the shoals you actually know</h1>
-    <p class="instructions">Use the <strong>polygon tool</strong> in the top-left of the map to trace a sandbar or shoal from your own knowledge of the river — click to place each point, click the first point again to close the loop. Name each shape below, then <strong>export</strong> the GeoJSON file and send it back.</p>
+    <p class="instructions">Use the <strong>polygon tool</strong> in the top-left of the map to trace a sandbar or shoal from your own knowledge of the river. Click to place each point, click the first point again to close the loop. Name each shape below, then <strong>export</strong> the GeoJSON file and send it back.</p>
   </div>
 
   <div class="map-frame">
@@ -238,9 +238,9 @@
 
   <div class="panel">
     <h2>Traced shapes</h2>
-    <p class="hint">Every polygon you draw shows up here. Give it a name (e.g. "Bachelor Point bar") — that name is saved into the exported file.</p>
+    <p class="hint">Every polygon you draw shows up here. Give it a name (e.g. "Bachelor Point bar"), that name is saved into the exported file.</p>
     <div class="shape-list" id="shapeList">
-      <p class="empty-note" id="emptyNote">No shapes drawn yet — use the polygon tool on the map above.</p>
+      <p class="empty-note" id="emptyNote">No shapes drawn yet. Use the polygon tool on the map above.</p>
     </div>
   </div>
 
@@ -408,7 +408,7 @@
   function persist(){
     try{
       localStorage.setItem(STORAGE_KEY, JSON.stringify(buildGeoJSON()));
-    }catch(e){ /* storage unavailable — export still works */ }
+    }catch(e){ /* storage unavailable, export still works */ }
   }
 
   function loadPersisted(){
@@ -435,7 +435,7 @@
     renderList();
     refreshPreview();
     persist();
-    setStatus('Shape added — name it below.');
+    setStatus('Shape added, name it below.');
   });
 
   map.on(L.Draw.Event.EDITED, function(){
@@ -453,7 +453,7 @@
 
   document.getElementById('btnExport').addEventListener('click', function(){
     var fc = buildGeoJSON();
-    if(fc.features.length === 0){ setStatus('Nothing to export yet — draw a shape first.'); return; }
+    if(fc.features.length === 0){ setStatus('Nothing to export yet, draw a shape first.'); return; }
     var blob = new Blob([JSON.stringify(fc, null, 2)], { type:'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -468,16 +468,16 @@
 
   document.getElementById('btnCopy').addEventListener('click', function(){
     var fc = buildGeoJSON();
-    if(fc.features.length === 0){ setStatus('Nothing to copy yet — draw a shape first.'); return; }
+    if(fc.features.length === 0){ setStatus('Nothing to copy yet, draw a shape first.'); return; }
     var text = JSON.stringify(fc, null, 2);
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(function(){
         setStatus('Copied GeoJSON to clipboard.');
       }, function(){
-        setStatus('Could not copy — select the raw GeoJSON below instead.');
+        setStatus('Could not copy, select the raw GeoJSON below instead.');
       });
     } else {
-      setStatus('Clipboard unavailable — select the raw GeoJSON below instead.');
+      setStatus('Clipboard unavailable, select the raw GeoJSON below instead.');
     }
   });
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Common Shoal — mobile concept</title>
+<title>Common Shoal: mobile concept</title>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -192,7 +192,7 @@
         <div class="h-14 px-margin-mobile flex items-center justify-between">
           <div class="flex flex-col justify-center">
             <h2 class="font-headline-lg-mobile text-[18px] leading-tight text-primary tracking-tighter uppercase font-bold">Common Shoal</h2>
-            <span class="font-data-mono text-[9px] text-primary/70 uppercase tracking-widest">Oxford, MD — Tred Avon &amp; Choptank</span>
+            <span class="font-data-mono text-[9px] text-primary/70 uppercase tracking-widest">Oxford, MD &middot; Tred Avon &amp; Choptank</span>
           </div>
           <div class="flex items-center gap-unit">
             <button class="w-10 h-10 flex items-center justify-center border-2 border-transparent active:border-primary transition-colors">
@@ -306,7 +306,7 @@
 <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 <script>
 (function(){
-  // Sample claims exported from draw.html. Demo data only — sizes, names,
+  // Sample claims exported from draw.html. Demo data only: sizes, names,
   // and positions are illustrative, not surveyed shoal locations.
   var CLAIMS = {
     "type": "FeatureCollection",
@@ -342,7 +342,7 @@
 
   // Small beats sprawling: where two claims overlap, the smaller one always
   // keeps that ground. A larger claim's rendered shape is its own loop minus
-  // every smaller, overlapping claim's (already-resolved) shape — computed
+  // every smaller, overlapping claim's (already-resolved) shape, computed
   // smallest-first so carving is transitive.
   function turfGeomToLeafletRings(geom){
     function ringToLatLng(ring){ return ring.map(function(c){ return [c[1], c[0]]; }); }
@@ -371,7 +371,7 @@
             smaller.__carvesInto.push(feature.properties.name || 'an unnamed claim');
           }
         }
-      }catch(e){ /* degenerate overlap geometry — leave effective as-is */ }
+      }catch(e){ /* degenerate overlap geometry, leave effective as-is */ }
     }
     feature.__effective = effective;
   });
