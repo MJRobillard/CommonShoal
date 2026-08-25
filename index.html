@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Common Shoal — chart the sandbars of Oxford, MD, together</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..600,0..1,-25..0&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EEE2;
+    --paper-line:#D9CFB6;
+    --ink:#1C2321;
+    --navy:#1B3A4B;
+    --navy-deep:#0E2530;
+    --sand:#D9BD8C;
+    --sand-strong:#C79D5E;
+    --buoy:#B8552E;
+    --depth:#2F6E68;
+    --muted:#5B6560;
+  }
+  *{box-sizing:border-box;}
+  .material-symbols-outlined{
+    font-family:'Material Symbols Outlined';
+    font-weight:normal;
+    font-style:normal;
+    line-height:1;
+    letter-spacing:normal;
+    text-transform:none;
+    display:inline-block;
+    white-space:nowrap;
+    word-wrap:normal;
+    direction:ltr;
+    -webkit-font-smoothing:antialiased;
+  }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .chart-bg{
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  header{
+    padding: 28px 6vw 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-size: 20px;
+    font-weight:600;
+    letter-spacing: 0.01em;
+    color: var(--navy-deep);
+  }
+  .wordmark span{color: var(--buoy);}
+  .tagline-tiny{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .hero{
+    padding: 64px 6vw 56px;
+    max-width: 1180px;
+    margin: 0 auto;
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 48px;
+    align-items:center;
+  }
+  @media (max-width: 900px){ .hero{grid-template-columns:1fr;} }
+  h1{
+    font-family:'Fraunces', serif;
+    font-size: clamp(28px, 3.4vw, 42px);
+    font-weight: 500;
+    line-height: 1.18;
+    max-width: 20ch;
+    margin: 0 0 28px;
+    color: var(--navy-deep);
+  }
+  .lede{
+    font-size: 17px;
+    color: #3C433F;
+    max-width: 46ch;
+    margin: 0 0 28px;
+  }
+  .nonprofit-badge{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--depth);
+    border: 1px solid var(--depth);
+    border-radius: 999px;
+    padding: 7px 14px 7px 12px;
+    margin-bottom: 28px;
+  }
+  .nonprofit-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--depth);}
+  .cta-row{display:flex; gap:12px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration:none;
+    display:inline-block;
+    border: 1px solid var(--navy-deep);
+  }
+  .btn-primary{background:var(--navy-deep); color:var(--paper);}
+  .btn-secondary{background:transparent; color:var(--navy-deep);}
+
+  /* ---- phone demo (replaces the old flat map card) ---- */
+  .phone-frame{
+    width: min(320px, 100%);
+    aspect-ratio: 320 / 660;
+    margin: 0 auto;
+    background: var(--navy-deep);
+    border-radius: 42px;
+    padding: 11px;
+    box-shadow: 0 28px 54px -22px rgba(14,37,48,0.5);
+  }
+  .phone-screen{
+    position:relative;
+    width:100%; height:100%;
+    background:var(--paper);
+    border-radius:32px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .dynamic-island{
+    position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:74px; height:19px; background:#000; border-radius:999px; z-index:50;
+  }
+  .home-indicator{
+    position:absolute; bottom:7px; left:50%; transform:translateX(-50%);
+    width:96px; height:3px; background:rgba(14,37,48,0.35); border-radius:999px; z-index:50;
+  }
+
+  .phone-header{
+    flex:none;
+    padding: 24px 14px 8px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    border-bottom: 1.5px solid var(--navy-deep);
+    background: var(--paper);
+    position:relative; z-index:40;
+  }
+  .phone-wordmark{ font-family:'Fraunces', serif; font-weight:600; font-size:14px; color:var(--navy-deep); letter-spacing:0.01em; }
+  .phone-wordmark span{ color:var(--buoy); }
+  .phone-tagline{ font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); margin-top:3px; }
+
+  .phone-main{ flex:1; min-height:0; position:relative; background:var(--navy-deep); overflow:hidden; }
+  .phone-map{ position:absolute; inset:0; }
+  .phone-scrim{
+    position:absolute; inset:0; pointer-events:none; z-index:5;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(14,37,48,0.5) 100%);
+  }
+
+  .phone-search{
+    position:relative; z-index:10; margin:10px 10px 0;
+    background:var(--paper); border:1.5px solid var(--navy-deep); border-radius:6px;
+    height:32px; display:flex; align-items:center; padding:0 8px; gap:6px;
+  }
+  .phone-search .material-symbols-outlined{ font-size:16px; color:var(--navy-deep); }
+  .phone-search input{ flex:1; min-width:0; border:none; background:transparent; font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:0.04em; text-transform:uppercase; color:var(--navy-deep); }
+  .phone-search input::placeholder{ color:rgba(14,37,48,0.45); }
+  .phone-add{ flex:none; width:21px; height:21px; background:var(--navy-deep); border:none; border-radius:4px; display:flex; align-items:center; justify-content:center; }
+  .phone-add .material-symbols-outlined{ font-size:13px; color:var(--paper); }
+
+  .phone-chips{ position:relative; z-index:10; display:flex; gap:6px; margin:6px 10px 0; overflow-x:auto; }
+  .chip{ font-family:'IBM Plex Mono',monospace; font-size:7.5px; background:var(--paper); border:1px solid var(--navy-deep); color:var(--navy-deep); padding:4px 7px; border-radius:4px; display:flex; flex-direction:column; gap:1px; white-space:nowrap; flex:none; }
+  .chip span{ opacity:0.6; text-transform:uppercase; letter-spacing:0.06em; }
+  .chip strong{ font-size:10px; }
+  .chip-solid{ background:var(--navy-deep); color:var(--paper); border-color:var(--navy-deep); }
+  .chip-solid span{ opacity:0.7; }
+
+  .phone-tools{ position:absolute; left:10px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:6px; z-index:10; }
+  .tool-btn{ width:28px; height:28px; border-radius:6px; border:1.5px solid var(--navy-deep); background:var(--paper); color:var(--navy-deep); display:flex; align-items:center; justify-content:center; }
+  .tool-btn .material-symbols-outlined{ font-size:15px; }
+  .tool-btn.active{ background:var(--navy-deep); color:var(--paper); }
+
+  .phone-drawer{
+    position:absolute; left:10px; right:10px; bottom:10px; z-index:20;
+    background:var(--paper); border:1.5px solid var(--navy-deep); border-radius:8px; overflow:hidden;
+    box-shadow:0 6px 14px rgba(14,37,48,0.25);
+  }
+  .drawer-toggle{
+    width:100%; background:var(--navy-deep); color:var(--paper); border:none; padding:7px 10px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .drawer-toggle .material-symbols-outlined{ font-size:14px; vertical-align:middle; }
+  .drawer-content{ max-height:132px; overflow-y:auto; }
+  .claim-row{ display:flex; justify-content:space-between; align-items:center; gap:6px; padding:6px 10px; border-bottom:1px solid var(--paper-line); cursor:pointer; }
+  .claim-row:last-child{ border-bottom:none; }
+  .claim-row.carving{ background:#EFE8D6; }
+  .claim-left{ display:flex; align-items:center; gap:6px; min-width:0; flex-wrap:wrap; }
+  .claim-swatch{ width:8px; height:8px; border-radius:2px; flex:none; }
+  .claim-name{ font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; text-transform:uppercase; color:var(--navy-deep); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .claim-right{ display:flex; align-items:center; gap:5px; flex:none; }
+  .claim-badge{ font-family:'IBM Plex Mono',monospace; font-size:6.5px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; padding:2px 4px; border-radius:3px; }
+  .claim-badge.carved{ background:var(--sand-strong); color:var(--navy-deep); white-space:nowrap; }
+  .claim-badge.core{ background:#FFC530; color:#5A3D00; white-space:nowrap; }
+  .claim-row.core{ background:#FFF6DE; }
+  .claim-badge.ttl{ color:var(--depth); background:none; padding:0; }
+  .claim-area{ font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--muted); }
+
+  .phone-nav{ flex:none; display:flex; background:var(--paper); border-top:1.5px solid var(--navy-deep); padding: 6px 0 16px; position:relative; z-index:40; }
+  .nav-tab{ flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; color:rgba(14,37,48,0.45); text-decoration:none; padding-top:4px; border-top:2px solid transparent; }
+  .nav-tab .material-symbols-outlined{ font-size:15px; }
+  .nav-tab span:last-child{ font-family:'IBM Plex Mono',monospace; font-size:6.5px; text-transform:uppercase; letter-spacing:0.05em; }
+  .nav-tab.active{ color:var(--navy-deep); border-top-color:var(--navy-deep); }
+
+  .phone-caption{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    color: var(--buoy);
+    text-align: center;
+    max-width: 280px;
+    margin: 12px auto 0;
+    line-height: 1.5;
+  }
+
+  .claim-tip{
+    font-family:'IBM Plex Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    background:var(--navy-deep); color:var(--paper); border:none; border-radius:3px; padding:3px 6px;
+  }
+  .claim-tip::before{ border-top-color:var(--navy-deep); }
+
+  section{ padding: 56px 6vw; max-width: 1180px; margin: 0 auto; }
+  .section-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--buoy);
+    margin-bottom: 10px;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size: 28px;
+    color: var(--navy-deep);
+    margin: 0 0 32px;
+  }
+  .rule{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width:900px){ .rule{grid-template-columns:1fr;} }
+  .rule-card{
+    border-top: 2px solid var(--navy-deep);
+    padding-top: 14px;
+  }
+  .rule-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--buoy);
+  }
+  .rule-card h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size: 19px;
+    margin: 8px 0 8px;
+    color: var(--navy-deep);
+  }
+  .rule-card p{ font-size: 14.5px; color: #454C48; margin:0; }
+
+  .why-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items:start;
+  }
+  @media (max-width:900px){ .why-grid{grid-template-columns:1fr;} }
+  .why-grid p{ font-size:15px; color:#3C433F; }
+  .quote-block{
+    font-family:'Fraunces', serif;
+    font-style:normal;
+    font-size: 19px;
+    color: var(--navy-deep);
+    border-left: 2px solid var(--sand-strong);
+    padding-left: 20px;
+    line-height:1.5;
+  }
+
+  .commons{
+    background: var(--navy-deep);
+    color: var(--paper);
+    border-radius: 12px;
+    padding: 40px 6vw;
+    margin: 0 6vw;
+    max-width: 1180px;
+    margin-left:auto; margin-right:auto;
+  }
+  .commons h2{ color: var(--paper); }
+  .commons-eyebrow{ color: #8FD3B0; }
+  .commons-list{
+    list-style:none; padding:0; margin:0;
+    display:grid; grid-template-columns: 1fr 1fr; gap: 18px 40px;
+  }
+  @media (max-width:900px){ .commons-list{grid-template-columns:1fr;} }
+  .commons-list li{
+    font-size:14.5px;
+    color:#D9E2DE;
+    padding-left: 18px;
+    position:relative;
+  }
+  .commons-list li:before{
+    content:"—";
+    position:absolute; left:0; color:#8FD3B0;
+  }
+
+  footer{
+    padding: 40px 6vw 60px;
+    max-width: 1180px;
+    margin: 0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:20px;
+    border-top: 1px solid var(--paper-line);
+    margin-top: 20px;
+  }
+  footer .foot-note{ font-size:13px; color:var(--muted); max-width:52ch; }
+  .leaflet-container{ font-family:'Inter',sans-serif; background: #DCE7E5 !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="wordmark">COMMON <span>SHOAL</span></div>
+    <div class="tagline-tiny">Oxford, Maryland — Tred Avon &amp; Choptank</div>
+  </div>
+  <div class="tagline-tiny">Demo — v0.1</div>
+</header>
+
+<div class="chart-bg">
+<section class="hero">
+  <div>
+    <h1>You don't need to own the whole cove. You just need the tightest claim around the sandbars. That's the part that lasts.</h1>
+    <div class="nonprofit-badge"><span class="dot"></span>Nonprofit &middot; open source &middot; run by the community</div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#involved">Get involved</a>
+      <a class="btn btn-secondary" href="#rules">How it works</a>
+    </div>
+  </div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+
+      <header class="phone-header">
+        <div>
+          <div class="phone-wordmark">COMMON <span>SHOAL</span></div>
+          <div class="phone-tagline">Tred Avon &amp; Choptank</div>
+        </div>
+        <div class="phone-tagline">Demo</div>
+      </header>
+
+      <main class="phone-main">
+        <div id="phoneMap" class="phone-map"></div>
+        <div class="phone-scrim"></div>
+
+        <div class="phone-search">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" placeholder="LOG COORDINATES..." disabled>
+          <button class="phone-add" aria-hidden="true" tabindex="-1"><span class="material-symbols-outlined">add</span></button>
+        </div>
+
+        <div class="phone-chips">
+          <div class="chip chip-solid"><span>SPD</span><strong>12.4 KTS</strong></div>
+          <div class="chip"><span>HDG</span><strong>045&deg; T</strong></div>
+          <div class="chip"><span>POS</span><strong>38.68&deg;N 76.18&deg;W</strong></div>
+        </div>
+
+        <div class="phone-tools">
+          <button class="tool-btn active" title="Trace a claim" tabindex="-1"><span class="material-symbols-outlined">polyline</span></button>
+          <button class="tool-btn" title="Drop a pin" tabindex="-1"><span class="material-symbols-outlined">place</span></button>
+          <button class="tool-btn" title="Measure" tabindex="-1"><span class="material-symbols-outlined">straighten</span></button>
+        </div>
+
+        <div class="phone-drawer">
+          <button class="drawer-toggle" id="phoneDrawerToggle">
+            <span><span class="material-symbols-outlined">menu_book</span> <span id="phoneDrawerCount">Active Claims</span></span>
+            <span class="material-symbols-outlined" id="phoneDrawerChevron">expand_more</span>
+          </button>
+          <div class="drawer-content" id="phoneDrawerContent"></div>
+        </div>
+      </main>
+
+      <nav class="phone-nav" id="phoneNav">
+        <a class="nav-tab active" data-tab="journal" href="#"><span class="material-symbols-outlined">map</span><span>Journal</span></a>
+        <a class="nav-tab" data-tab="claims" href="#"><span class="material-symbols-outlined">military_tech</span><span>Claims</span></a>
+        <a class="nav-tab" data-tab="gear" href="#"><span class="material-symbols-outlined">build</span><span>Gear</span></a>
+        <a class="nav-tab" data-tab="config" href="#"><span class="material-symbols-outlined">settings</span><span>Config</span></a>
+        <div class="nav-tab" aria-hidden="true"><span class="material-symbols-outlined">redeem</span><span>Rewards</span></div>
+      </nav>
+
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+  <p class="phone-caption">Small beats big where they overlap &mdash; trace tighter and that ground is yours, no matter who claimed it first. That's Bob's carved out of John's territory below. The gold patches are the actual sand &mdash; the tighter a claim sits around one, the longer it holds.</p>
+</section>
+</div>
+
+<section id="rules">
+  <div class="section-eyebrow">The mechanic</div>
+  <h2>Small beats sprawling</h2>
+  <div class="rule">
+    <div class="rule-card">
+      <div class="rule-num">01</div>
+      <h3>Close a loop</h3>
+      <p>Your boat's track is the pen. Circle a stretch of water — around a shoal, a channel edge, wherever you think the bottom's changed — and closing the loop claims it.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">02</div>
+      <h3>Small beats sprawling</h3>
+      <p>A tight, precise claim can't be swallowed by a bigger loop drawn around it — at most, the big loop takes the open water around your ground, never the ground itself. Trace tighter than an existing claim and you carve that piece out for yourself, at reduced points.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">03</div>
+      <h3>Holds until it's proven wrong</h3>
+      <p>Claims run on a long clock, but any boater who finds open water where a claim says there's a bar can report it — enough reports and the ground opens back up. That's how the map tracks a bar that's actually moved.</p>
+    </div>
+  </div>
+  <p style="margin-top:28px;"><a class="btn btn-secondary" href="how-it-works.html">Watch small beat sprawling &rarr;</a></p>
+</section>
+
+<section>
+  <div class="why-grid">
+    <div>
+      <div class="section-eyebrow">Why it matters</div>
+      <h2>The chart is always a little bit wrong</h2>
+      <p>Paper charts and even NOAA soundings lag behind what the river actually does — sandbars here move with every strong tide and storm. The people who know the current truth are already out there: hobbyist boaters, crabbers, the sailing club. This just gives that knowledge a place to live, updated by the hour instead of by the season.</p>
+      <p>None of this is monetized. No ads, no paid tiers, no data resale — the map exists because the community needs it and keeps it honest.</p>
+    </div>
+    <div class="quote-block">
+      A live, crowdsourced shoal map is exactly the kind of dataset a state aquatic resource lab can't generate on its own, but can absolutely put to use.
+    </div>
+  </div>
+</section>
+
+<div style="padding: 0 6vw;">
+<div class="commons">
+  <div class="section-eyebrow commons-eyebrow">Open by design</div>
+  <h2>How the commons stays a commons</h2>
+  <ul class="commons-list">
+    <li>Code is open source on GitHub — anyone can read it, fork it, or point out what's broken.</li>
+    <li>Sandbar data is released under an open geodata license, so no one, including us, can lock it up later.</li>
+    <li>No monetization: the pub tab and any prizes come from local sponsorship, not user data.</li>
+    <li>Every contributor's loops are attributed to them, on the map, permanently.</li>
+    <li>Decisions about the project happen in the open — issues, not backroom calls.</li>
+    <li>Built to hand off: if a local group wants to steward this long-term, it's built to be handed over.</li>
+  </ul>
+</div>
+</div>
+
+<section id="involved">
+  <div class="section-eyebrow">Join in</div>
+  <h2>This starts with people on the water, not code</h2>
+  <p style="max-width:56ch; color:#3C433F; font-size:15px;">Before this goes further, it needs boaters who'll actually try it and tell us what's wrong with it. If that's you — or you know the right person at the marina, the yacht club, or the pub — say hello.</p>
+  <div class="cta-row" style="margin-top:20px;">
+    <a class="btn btn-primary" href="mailto:hello@commonshoal.org">Say hello</a>
+    <a class="btn btn-secondary" href="#">View the repo</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wordmark" style="font-size:15px;">COMMON <span>SHOAL</span></div>
+  <div class="foot-note">A community-run, nonprofit mapping project for Oxford, Maryland boaters. This page is an early concept demo — the loop-claiming game and live data feed shown here are illustrative, not live.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+<script>
+(function(){
+  // Sample claims exported from draw.html. Demo data only — names, sizes,
+  // and positions are illustrative, not surveyed shoal locations.
+  var CLAIMS = {
+    "type": "FeatureCollection",
+    "features": [
+      { "type":"Feature","properties":{"name":"Bob's","area_m2":324497},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.186329,38.691923],[-76.189162,38.685889],[-76.183877,38.685141],[-76.183148,38.688257],[-76.181088,38.692377],[-76.186329,38.691923]]]}},
+      { "type":"Feature","properties":{"name":"John's","area_m2":927900},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.185899,38.680257],[-76.181092,38.692526],[-76.173022,38.687565],[-76.175082,38.681263],[-76.179718,38.680525],[-76.185899,38.680257]]]}},
+      { "type":"Feature","properties":{"name":"","area_m2":122020},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.184053,38.685159],[-76.188302,38.682243],[-76.19238,38.685394],[-76.184053,38.685159]]]}},
+      { "type":"Feature","properties":{"name":"","area_m2":86798},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.18856,38.68231],[-76.1871,38.679058],[-76.181134,38.678086],[-76.18856,38.68231]]]}},
+      { "type":"Feature","properties":{"name":"","area_m2":102651},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.181263,38.680395],[-76.172418,38.679413],[-76.180576,38.677914],[-76.181263,38.680395]]]}},
+      { "type":"Feature","properties":{"name":"","area_m2":338000},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.181439,38.677957],[-76.195948,38.681042],[-76.197837,38.676616],[-76.181439,38.677957]]]}},
+      { "type":"Feature","properties":{"name":"","area_m2":57033},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.192771,38.683992],[-76.195261,38.681377],[-76.191827,38.680237],[-76.192771,38.683992]]]}},
+      { "type":"Feature","properties":{"name":"Bachelor Point bar","area_m2":454571},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.197358,38.671812],[-76.177108,38.675901],[-76.176336,38.67208],[-76.193754,38.671209],[-76.197358,38.671812]]]}},
+      { "type":"Feature","properties":{"name":"Town Creek flats","area_m2":57900},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.166,38.6905],[-76.1645,38.6925],[-76.1625,38.6915],[-76.1638,38.6895],[-76.166,38.6905]]]}},
+
+      { "type":"Feature","properties":{"name":"Bachelor Point sandbar","area_m2":61200,"core":true},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.18525,38.6732],[-76.186125,38.674412],[-76.187875,38.674412],[-76.18875,38.6732],[-76.187875,38.671988],[-76.186125,38.671988],[-76.18525,38.6732]]]}},
+      { "type":"Feature","properties":{"name":"Mid-cove sandbar","area_m2":73200,"core":true},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.189791,38.678538],[-76.190766,38.679837],[-76.192716,38.679837],[-76.193691,38.678538],[-76.192716,38.677239],[-76.190766,38.677239],[-76.189791,38.678538]]]}},
+      { "type":"Feature","properties":{"name":"John's sandbar","area_m2":60800,"core":true},
+        "geometry":{"type":"Polygon","coordinates":[[[-76.1757,38.6845],[-76.1766,38.685669],[-76.1784,38.685669],[-76.1793,38.6845],[-76.1784,38.683331],[-76.1766,38.683331],[-76.1757,38.6845]]]}}
+    ]
+  };
+
+  var PALETTE = ['#2F6E68', '#C79D5E', '#6B5B95', '#8FA37E'];
+
+  // Rounds a closed ring of straight vertices into a smooth, wandering curve —
+  // reads like an actual boat's wake instead of a ruled polygon. Catmull-Rom
+  // spline through the original points, sampled densely between each pair.
+  function smoothRing(latlngs, segmentsPerEdge){
+    var n = latlngs.length;
+    var out = [];
+    function at(i){ return latlngs[(i % n + n) % n]; }
+    function lerp(a, b, c, d, t){
+      var t2 = t*t, t3 = t2*t;
+      return 0.5 * ((2*b) + (-a+c)*t + (2*a-5*b+4*c-d)*t2 + (-a+3*b-3*c+d)*t3);
+    }
+    for(var i=0;i<n;i++){
+      var p0=at(i-1), p1=at(i), p2=at(i+1), p3=at(i+2);
+      for(var s=0;s<segmentsPerEdge;s++){
+        var t = s/segmentsPerEdge;
+        out.push([
+          lerp(p0[0],p1[0],p2[0],p3[0],t),
+          lerp(p0[1],p1[1],p2[1],p3[1],t)
+        ]);
+      }
+    }
+    return out;
+  }
+
+  var map = L.map('phoneMap', {
+    zoomControl: false,
+    scrollWheelZoom: false,
+    attributionControl: false
+  }).setView([38.68, -76.185], 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(map);
+
+  function pseudoTTL(areaM2){
+    var hours = Math.max(0.15, 900000 / areaM2);
+    if(hours >= 1){ return Math.round(hours) + 'H TTL'; }
+    return Math.max(1, Math.round(hours * 60)) + 'M TTL';
+  }
+
+  // Turf helpers: convert a smoothed [lat,lng] ring to a closed turf polygon
+  // ([lng,lat], first point repeated at the end), and convert a turf geometry
+  // back into rings Leaflet can render (holes/multi-parts included).
+  function toTurfPoly(latlngRing){
+    var coords = latlngRing.map(function(p){ return [p[1], p[0]]; });
+    coords.push(coords[0]);
+    return turf.polygon([coords]);
+  }
+  function turfGeomToLeafletRings(geom){
+    function ringToLatLng(ring){ return ring.map(function(c){ return [c[1], c[0]]; }); }
+    if(geom.type === 'Polygon'){ return geom.coordinates.map(ringToLatLng); }
+    if(geom.type === 'MultiPolygon'){ return geom.coordinates.map(function(poly){ return poly.map(ringToLatLng); }); }
+    return [];
+  }
+
+  // Smooth every claim's ring first (boat-wake curve), then work out
+  // precedence: a smaller claim always keeps its ground where it overlaps a
+  // larger one — the larger claim's rendered shape is its own smoothed loop
+  // minus every smaller, overlapping claim, computed pairwise smallest-first.
+  var order = CLAIMS.features.slice().sort(function(a, b){
+    return a.properties.area_m2 - b.properties.area_m2;
+  });
+
+  order.forEach(function(feature){
+    var ring = feature.geometry.coordinates[0].slice(0, -1).map(function(c){ return [c[1], c[0]]; });
+    feature.__smoothed = smoothRing(ring, 8);
+    feature.__carvedBy = [];   // smaller claims that cut into this one
+    feature.__carvesInto = []; // larger claims this one has cut into
+  });
+
+  order.forEach(function(feature, idx){
+    var effective = toTurfPoly(feature.__smoothed);
+    for(var j = 0; j < idx; j++){
+      var smaller = order[j];
+      var smallerPoly = smaller.__effective;
+      try{
+        if(turf.booleanIntersects(effective, smallerPoly)){
+          var diffed = turf.difference(effective, smallerPoly);
+          if(diffed){
+            effective = diffed;
+            feature.__carvedBy.push(smaller.properties.name || 'an unnamed claim');
+            smaller.__carvesInto.push(feature.properties.name || 'an unnamed claim');
+          }
+        }
+      }catch(e){ /* degenerate overlap geometry — leave effective as-is */ }
+    }
+    feature.__effective = effective;
+  });
+
+  var claimsMeta = [];
+  var colorIndex = 0;
+  var bounds = null;
+
+  var CORE_FILL = '#FFC530';
+  var CORE_STROKE = '#B8811A';
+
+  CLAIMS.features.forEach(function(feature){
+    var name = feature.properties.name;
+    var isCore = !!feature.properties.core;
+    var color = isCore ? CORE_FILL : PALETTE[colorIndex++ % PALETTE.length];
+    var displayArea = feature.__carvedBy.length
+      ? Math.round(turf.area(feature.__effective))
+      : feature.properties.area_m2;
+
+    var layer = L.polygon(turfGeomToLeafletRings(feature.__effective.geometry), {
+      color: isCore ? CORE_STROKE : color,
+      weight: isCore ? 2.5 : 2,
+      fillColor: color,
+      fillOpacity: isCore ? 0.75 : 0.3,
+      smoothFactor: 1.5
+    }).addTo(map);
+
+    layer.bindTooltip(name || 'Unnamed claim', { className: 'claim-tip', sticky: true });
+
+    bounds = bounds ? bounds.extend(layer.getBounds()) : L.latLngBounds(layer.getBounds());
+    claimsMeta.push({
+      name: name || 'Unnamed claim',
+      area: displayArea,
+      carvesInto: feature.__carvesInto,
+      core: isCore,
+      color: isCore ? CORE_STROKE : color,
+      layer: layer
+    });
+  });
+
+  if(bounds){ map.fitBounds(bounds, { padding: [18, 18] }); }
+
+  var drawerCount = document.getElementById('phoneDrawerCount');
+  drawerCount.textContent = 'Active Claims (' + claimsMeta.length + ')';
+
+  var drawerContent = document.getElementById('phoneDrawerContent');
+  claimsMeta.forEach(function(item){
+    var row = document.createElement('div');
+    row.className = 'claim-row' + (item.carvesInto.length ? ' carving' : '') + (item.core ? ' core' : '');
+
+    var left = document.createElement('div');
+    left.className = 'claim-left';
+    left.innerHTML =
+      '<span class="claim-swatch" style="background:' + item.color + '"></span>' +
+      '<span class="claim-name">' + item.name + '</span>' +
+      (item.core ? '<span class="claim-badge core">sandbar</span>' : '') +
+      (item.carvesInto.length
+        ? '<span class="claim-badge carved">in ' + item.carvesInto[0] + '</span>'
+        : '');
+
+    var right = document.createElement('div');
+    right.className = 'claim-right';
+    right.innerHTML =
+      '<span class="claim-badge ttl">' + pseudoTTL(item.area) + '</span>' +
+      '<span class="claim-area">' + Math.round(item.area).toLocaleString() + 'm&sup2;</span>';
+
+    row.appendChild(left);
+    row.appendChild(right);
+    row.addEventListener('click', function(){
+      map.fitBounds(item.layer.getBounds(), { padding: [24, 24], maxZoom: 15 });
+      item.layer.openTooltip();
+    });
+    drawerContent.appendChild(row);
+  });
+
+  document.getElementById('phoneDrawerToggle').addEventListener('click', function(){
+    drawerContent.classList.toggle('hidden-drawer');
+    drawerContent.style.display = drawerContent.classList.contains('hidden-drawer') ? 'none' : '';
+    document.getElementById('phoneDrawerChevron').textContent =
+      drawerContent.classList.contains('hidden-drawer') ? 'expand_less' : 'expand_more';
+  });
+
+  document.querySelectorAll('#phoneNav a.nav-tab').forEach(function(tab){
+    tab.addEventListener('click', function(e){
+      e.preventDefault();
+      document.querySelectorAll('#phoneNav a.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

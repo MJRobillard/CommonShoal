@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Common Shoal — how claiming works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EEE2;
+    --paper-line:#D9CFB6;
+    --ink:#1C2321;
+    --navy-deep:#0E2530;
+    --sand:#D9BD8C;
+    --sand-strong:#C79D5E;
+    --buoy:#B8552E;
+    --depth:#2F6E68;
+    --muted:#5B6560;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding: 40px 5vw 60px;
+  }
+  .title{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size: clamp(24px, 3.4vw, 34px);
+    color:var(--navy-deep);
+    margin: 0 0 6px;
+    text-align:center;
+  }
+  .subtitle{
+    text-align:center;
+    color:var(--muted);
+    font-size:15px;
+    max-width: 56ch;
+    margin: 0 auto 40px;
+  }
+  .stage-row{
+    display:flex;
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-content:center;
+  }
+  .stage{
+    flex: 1 1 420px;
+    max-width: 460px;
+    background:#fff;
+    border: 1px solid var(--paper-line);
+    border-radius: 10px;
+    overflow:hidden;
+  }
+  .stage-head{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--paper-line);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .stage-name{
+    font-family:'Fraunces', serif;
+    font-size: 16px;
+    color:var(--navy-deep);
+  }
+  .stage-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--muted);
+  }
+  svg{ display:block; width:100%; height:auto; background:#DCE7E5; }
+  .stage-foot{
+    padding: 12px 16px 16px;
+  }
+  .stage-caption{
+    margin:0;
+    font-size: 13px;
+    line-height:1.5;
+    color:#3C433F;
+  }
+  .stage-caption strong{ color:var(--navy-deep); }
+  .stage-status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--buoy);
+    margin: 0 0 6px;
+  }
+  .legend{
+    display:flex;
+    justify-content:center;
+    gap: 24px;
+    margin-top: 40px;
+    flex-wrap:wrap;
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    color:#3C433F;
+  }
+  .swatch{ width:12px; height:12px; border-radius:2px; }
+  nav.back{
+    text-align:center;
+    margin-top: 48px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  nav.back a{ color: var(--depth); }
+</style>
+</head>
+<body>
+
+<div class="title">Small beats sprawling</div>
+<div class="subtitle">Same rule, both directions. A tighter loop always keeps the ground it overlaps — whether it's traced first or second, and whether it's carving in or being carved around.</div>
+
+<div class="stage-row">
+
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-name">Trace inside a claim</span>
+      <span class="stage-tag">carves in</span>
+    </div>
+    <svg id="svg-a" viewBox="0 0 460 320"></svg>
+    <div class="stage-foot">
+      <p class="stage-status" id="status-a">&nbsp;</p>
+      <p class="stage-caption" id="caption-a">John already holds this water. Watch what happens when a tighter loop is traced inside it.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-name">Trace around a claim</span>
+      <span class="stage-tag">can't swallow it</span>
+    </div>
+    <svg id="svg-b" viewBox="0 0 460 320"></svg>
+    <div class="stage-foot">
+      <p class="stage-status" id="status-b">&nbsp;</p>
+      <p class="stage-caption" id="caption-b">Bob already holds this small patch. Watch what happens when a wide loop is traced around it.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="swatch" style="background:var(--buoy);"></span>Boat track, in progress</div>
+  <div class="legend-item"><span class="swatch" style="background:var(--sand);"></span>John's claim</div>
+  <div class="legend-item"><span class="swatch" style="background:var(--depth);"></span>Bob's claim</div>
+</div>
+
+<nav class="back">
+  <a href="index.html">&larr; Back to the pitch page</a> &middot; <a href="draw.html">Trace real shoals</a>
+</nav>
+
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+<script>
+const NS = "http://www.w3.org/2000/svg";
+
+// Flat shoelace area — these are illustration coordinates on a fixed
+// canvas, not geographic ones, so this (not turf.area) is the right tool
+// for the "how much ground" captions.
+function flatArea(points){
+  var area = 0, n = points.length;
+  for(var i=0;i<n;i++){
+    var p1 = points[i], p2 = points[(i+1)%n];
+    area += p1[0]*p2[1] - p2[0]*p1[1];
+  }
+  return Math.abs(area/2);
+}
+
+function closeRing(points){
+  var r = points.slice();
+  var first = r[0], last = r[r.length-1];
+  if(first[0] !== last[0] || first[1] !== last[1]){ r.push(first); }
+  return r;
+}
+
+function ringToD(ring){
+  return "M" + ring.map(function(p){ return p[0]+","+p[1]; }).join("L") + "Z";
+}
+function geomToPathD(geom){
+  if(!geom) return "";
+  if(geom.type === "Polygon"){ return geom.coordinates.map(ringToD).join(" "); }
+  if(geom.type === "MultiPolygon"){
+    return geom.coordinates.map(function(poly){ return poly.map(ringToD).join(" "); }).join(" ");
+  }
+  return "";
+}
+
+function makeStage(config){
+  var svg = document.getElementById(config.svgId);
+  var statusEl = document.getElementById(config.statusId);
+  var captionEl = document.getElementById(config.captionId);
+
+  var existingRing = closeRing(config.existingPoints);
+  var incomingRing = closeRing(config.incomingPoints);
+  var existingArea = flatArea(config.existingPoints);
+  var incomingArea = flatArea(config.incomingPoints);
+
+  var existingPath = document.createElementNS(NS, "path");
+  existingPath.setAttribute("fill", config.existingColor);
+  existingPath.setAttribute("fill-opacity", "0.55");
+  existingPath.setAttribute("fill-rule", "evenodd");
+  existingPath.setAttribute("stroke", config.existingColor);
+  existingPath.setAttribute("stroke-width", "1.5");
+  existingPath.setAttribute("d", ringToD(config.existingPoints));
+  svg.appendChild(existingPath);
+
+  var incomingFill = document.createElementNS(NS, "path");
+  incomingFill.setAttribute("fill", config.incomingColor);
+  incomingFill.setAttribute("fill-opacity", "0");
+  incomingFill.setAttribute("fill-rule", "evenodd");
+  incomingFill.setAttribute("stroke", config.incomingColor);
+  incomingFill.setAttribute("stroke-width", "1.5");
+  svg.appendChild(incomingFill);
+
+  var track = document.createElementNS(NS, "polyline");
+  track.setAttribute("fill", "none");
+  track.setAttribute("stroke", "#B8552E");
+  track.setAttribute("stroke-width", "2.5");
+  track.setAttribute("stroke-linecap", "round");
+  track.setAttribute("stroke-linejoin", "round");
+  svg.appendChild(track);
+
+  var boat = document.createElementNS(NS, "circle");
+  boat.setAttribute("r", "5");
+  boat.setAttribute("fill", "#0E2530");
+  svg.appendChild(boat);
+
+  function pointOnPath(t){
+    var pts = config.incomingPoints;
+    var segCount = pts.length - 1;
+    var segF = t * segCount;
+    var i = Math.min(Math.floor(segF), segCount - 1);
+    var localT = segF - i;
+    var p1 = pts[i], p2 = pts[i+1];
+    return [p1[0] + (p2[0]-p1[0])*localT, p1[1] + (p2[1]-p1[1])*localT];
+  }
+
+  function resolveCarve(){
+    var existingPoly = turf.polygon([existingRing]);
+    var incomingPoly = turf.polygon([incomingRing]);
+
+    if(config.whoGetsCarved === "existing"){
+      var diffed = turf.difference(existingPoly, incomingPoly);
+      existingPath.setAttribute("d", geomToPathD(diffed ? diffed.geometry : null));
+      incomingFill.setAttribute("d", ringToD(config.incomingPoints));
+      incomingFill.setAttribute("fill-opacity", "0.55");
+      var pct = Math.round((incomingArea / existingArea) * 100);
+      statusEl.textContent = "Carved";
+      captionEl.innerHTML = "<strong>" + pct + "%</strong> of John's claim is now Bob's — traced tighter, so it holds, at reduced points for overlapping ground already claimed.";
+    } else {
+      var diffed2 = turf.difference(incomingPoly, existingPoly);
+      incomingFill.setAttribute("d", geomToPathD(diffed2 ? diffed2.geometry : null));
+      incomingFill.setAttribute("fill-opacity", "0.55");
+      var kept = Math.round((existingArea / incomingArea) * 100);
+      statusEl.textContent = "Blocked";
+      captionEl.innerHTML = "The wide loop claims the open water around Bob's patch, but can't touch it — <strong>" + kept + "%</strong> of the loop's own area sits inside ground it was never allowed to take.";
+    }
+  }
+
+  function reset(){
+    existingPath.setAttribute("d", ringToD(config.existingPoints));
+    incomingFill.setAttribute("d", "");
+    incomingFill.setAttribute("fill-opacity", "0");
+    track.setAttribute("points", "");
+    statusEl.textContent = "Tracing…";
+    captionEl.textContent = config.introCaption;
+  }
+
+  var phase = "drawing";
+  var phaseStart = performance.now();
+  reset();
+
+  function frame(now){
+    var elapsed = now - phaseStart;
+
+    if(phase === "drawing"){
+      var t = Math.min(elapsed / config.drawMs, 1);
+      var tracedCount = Math.max(2, Math.ceil(t * (config.incomingPoints.length - 1)) + 1);
+      var traced = config.incomingPoints.slice(0, tracedCount);
+      var cur = pointOnPath(t);
+      var pts = traced.map(function(p){ return p.join(","); }).join(" ") + " " + cur[0] + "," + cur[1];
+      track.setAttribute("points", pts);
+      boat.setAttribute("cx", cur[0]);
+      boat.setAttribute("cy", cur[1]);
+
+      if(t >= 1){
+        resolveCarve();
+        track.setAttribute("points", "");
+        phase = "holding";
+        phaseStart = now;
+      }
+    } else if(phase === "holding"){
+      if(elapsed > config.holdMs){
+        phase = "reset";
+        phaseStart = now;
+      }
+    } else if(phase === "reset"){
+      if(elapsed > 700){
+        reset();
+        phase = "drawing";
+        phaseStart = now;
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// Stage A: John's claim already sits here; Bob traces a tighter loop
+// fully inside it and carves that ground out for himself.
+makeStage({
+  svgId: "svg-a", statusId: "status-a", captionId: "caption-a",
+  existingPoints: [[60,60],[380,50],[420,160],[340,270],[120,290],[40,180],[60,60]],
+  existingColor: "#D9BD8C",
+  incomingPoints: [[280,105],[315,120],[325,160],[300,195],[255,190],[240,150],[260,115],[280,105]],
+  incomingColor: "#2F6E68",
+  whoGetsCarved: "existing",
+  drawMs: 3200, holdMs: 4200,
+  introCaption: "John already holds this water. Watch what happens when a tighter loop is traced inside it."
+});
+
+// Stage B: Bob's small claim already sits here; John traces a wide loop
+// around it — the loop takes the open water, never Bob's ground.
+makeStage({
+  svgId: "svg-b", statusId: "status-b", captionId: "caption-b",
+  existingPoints: [[230,120],[265,135],[275,175],[245,205],[200,195],[190,155],[210,125],[230,120]],
+  existingColor: "#2F6E68",
+  incomingPoints: [[70,60],[390,55],[430,170],[350,275],[130,290],[50,190],[70,60]],
+  incomingColor: "#D9BD8C",
+  whoGetsCarved: "incoming",
+  drawMs: 4200, holdMs: 4200,
+  introCaption: "Bob already holds this small patch. Watch what happens when a wide loop is traced around it."
+});
+</script>
+
+</body>
+</html>
