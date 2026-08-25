@@ -59,13 +59,27 @@ date.
   `area_acres` — hand that file back to fold real shoal locations into the
   demo.
 
-## Status
+## Project timeline
 
-Early concept / outreach demo. The goal right now is validating community
-interest (boaters, the local art shop, the pub, and the state aquatic and
-natural resources researchers who'd use the data) before building the real
-game — live GPS tracking, loop-closure detection, and a realtime backend for
-expiring claims.
+- **Demo (current)** — the pitch page, mobile mockup, drawing tool, and
+  mechanic explainer in this repo. Proving the concept before writing any
+  real backend.
+- **Community outreach (current)** — talking to local boaters, the art
+  shop, the pub, and the state aquatic and natural resources researchers
+  who'd actually use a live shoal map, to find out if this is worth
+  building for real.
+- **Real build (next, pending outreach)** — live GPS tracking, loop-closure
+  detection, and a realtime backend for expiring claims.
+
+## Possible future features
+
+Nothing here is committed — these are ideas worth trying once the core
+game is real:
+
+- **Team mode** — claim and defend ground as a crew instead of solo.
+- **Oxford vs. Bellevue** — a standing rivalry mode between the two towns
+  on either side of the Tred Avon, tallying whose side holds more of the
+  river.
 
 ## License (intended, once this becomes a real project)
 
@@ -73,3 +87,8 @@ expiring claims.
 - **Sandbar/shoal data:** an open geodata license requiring attribution
   (ODbL or CC-BY), so the map stays free to use but the community's
   contribution stays credited.
+
+## Contact
+
+Matt Robillard — [mjrobillard.com](https://mjrobillard.com) ·
+robillard.matthew22@gmail.com · (510) 220-9685
