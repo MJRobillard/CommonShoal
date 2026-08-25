@@ -287,7 +287,7 @@ function makeStage(config){
     var elapsed = now - phaseStart;
 
     if(phase === "drawing"){
-      var t = Math.min(elapsed / config.drawMs, 1);
+      var t = Math.max(0, Math.min(elapsed / config.drawMs, 1));
       var tracedCount = Math.max(2, Math.ceil(t * (config.incomingPoints.length - 1)) + 1);
       var traced = config.incomingPoints.slice(0, tracedCount);
       var cur = pointOnPath(t);
