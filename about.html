@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Common Shoal: about the project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E9F1F6;
+    --paper-line:#C6D3DD;
+    --ink:#131C22;
+    --navy:#1B3A4B;
+    --navy-deep:#0E2530;
+    --sand:#D9BD8C;
+    --sand-strong:#C79D5E;
+    --buoy:#1D63C9;
+    --depth:#2F6E68;
+    --muted:#57616B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  header{
+    padding: 28px 6vw 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-size: 20px;
+    font-weight:600;
+    letter-spacing: 0.01em;
+    color: var(--navy-deep);
+  }
+  .wordmark span{color: var(--buoy);}
+  .tagline-tiny{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  header nav a{ color: var(--depth); text-decoration:none; font-family:'IBM Plex Mono', monospace; font-size: 12px; }
+  header nav a:hover{ text-decoration:underline; }
+
+  section{ padding: 48px 6vw; max-width: 1180px; margin: 0 auto; }
+  .intro{ padding-bottom: 8px; }
+  .section-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--buoy);
+    margin-bottom: 10px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 500;
+    line-height: 1.18;
+    max-width: 24ch;
+    margin: 0 0 20px;
+    color: var(--navy-deep);
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size: 26px;
+    color: var(--navy-deep);
+    margin: 0 0 28px;
+  }
+  .lede{
+    font-size: 16px;
+    color: #3C433F;
+    max-width: 62ch;
+    margin: 0;
+  }
+  .nonprofit-badge{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--depth);
+    border: 1px solid var(--depth);
+    border-radius: 999px;
+    padding: 7px 14px 7px 12px;
+    margin: 20px 0 0;
+  }
+  .nonprofit-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--depth);}
+
+  .rule{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width:900px){ .rule{grid-template-columns:1fr;} }
+  .rule-card{
+    border-top: 2px solid var(--navy-deep);
+    padding-top: 14px;
+  }
+  .rule-card h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size: 19px;
+    margin: 8px 0 8px;
+    color: var(--navy-deep);
+  }
+  .rule-card p{ font-size: 14.5px; color: #454C48; margin:0; }
+  .timeline-badge{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    display:inline-block;
+  }
+  .timeline-badge.now{ background: var(--depth); color:#fff; }
+  .timeline-badge.next{ background: var(--paper-line); color: var(--navy-deep); }
+
+  .quote-block{
+    font-family:'Fraunces', serif;
+    font-style:normal;
+    font-size: 18px;
+    color: var(--navy-deep);
+    border-left: 2px solid var(--sand-strong);
+    padding-left: 20px;
+    line-height:1.5;
+    max-width: 70ch;
+  }
+
+  .commons{
+    background: var(--navy-deep);
+    color: var(--paper);
+    border-radius: 12px;
+    padding: 40px 6vw;
+    margin: 0 6vw;
+    max-width: 1180px;
+    margin-left:auto; margin-right:auto;
+  }
+  .commons h2{ color: var(--paper); }
+  .commons-eyebrow{ color: #8FD3B0; }
+  .commons-list{
+    list-style:none; padding:0; margin:0;
+    display:grid; grid-template-columns: 1fr 1fr; gap: 18px 40px;
+  }
+  @media (max-width:900px){ .commons-list{grid-template-columns:1fr;} }
+  .commons-list li{
+    font-size:14.5px;
+    color:#D9E2DE;
+    padding-left: 18px;
+    position:relative;
+  }
+  .commons-list li:before{
+    content:"\2022";
+    position:absolute; left:0; color:#8FD3B0;
+  }
+
+  footer{
+    padding: 40px 6vw 60px;
+    max-width: 1180px;
+    margin: 0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:20px;
+    border-top: 1px solid var(--paper-line);
+    margin-top: 20px;
+  }
+  footer .foot-note{ font-size:13px; color:var(--muted); max-width:52ch; }
+  .footer-links{
+    display:flex;
+    gap: 16px;
+    flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+  }
+  .footer-links a{ color: var(--depth); text-decoration:none; }
+  .footer-links a:hover{ text-decoration:underline; }
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration:none;
+    display:inline-block;
+    border: 1px solid var(--navy-deep);
+  }
+  .btn-primary{background:var(--navy-deep); color:var(--paper);}
+  .btn-secondary{background:transparent; color:var(--navy-deep);}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="wordmark">COMMON <span>SHOAL</span></div>
+    <div class="tagline-tiny">Oxford, Maryland &middot; Tred Avon &amp; Choptank</div>
+  </div>
+  <nav><a href="index.html">&larr; Back to the pitch page</a></nav>
+</header>
+
+<section class="intro">
+  <div class="section-eyebrow">About the project</div>
+  <h1>A nonprofit, open source, community-run map, and nothing else.</h1>
+  <p class="lede">Common Shoal turns boater tracks into a live shoal map for the Tred Avon &amp; Choptank. Here's the organizational detail behind the game: who runs it, how it's funded, and where the project stands.</p>
+  <div class="nonprofit-badge"><span class="dot"></span>Nonprofit &middot; Open Source &middot; Community-Run</div>
+</section>
+
+<section>
+  <div class="section-eyebrow">Where this stands</div>
+  <h2>Project timeline</h2>
+  <div class="rule">
+    <div class="rule-card">
+      <span class="timeline-badge now">Now</span>
+      <h3>Demo</h3>
+      <p>The pitch page, mobile mockup, drawing tool, and mechanic explainer, proving the concept before writing any real backend.</p>
+    </div>
+    <div class="rule-card">
+      <span class="timeline-badge now">Now</span>
+      <h3>Community outreach</h3>
+      <p>Talking to local boaters, paddlers, the art shop, the pub, and the state aquatic and natural resources researchers who'd actually use a live shoal map.</p>
+    </div>
+    <div class="rule-card">
+      <span class="timeline-badge next">Next</span>
+      <h3>Real build</h3>
+      <p>Live GPS tracking, loop-closure detection, and a realtime backend for expiring claims, once outreach says it's worth building.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-eyebrow">Context</div>
+  <h2>Why a nonprofit</h2>
+  <div class="quote-block">
+    NOAA already runs a water-level monitor at this river's mouth and named the Choptank complex a federal Habitat Focus Area back in 2014. A live, crowdsourced shoal map is exactly the kind of dataset that effort can't generate on its own, but could absolutely put to use. Keeping this a nonprofit means the map serves that public interest, not a revenue target.
+  </div>
+</section>
+
+<div style="padding: 0 6vw;">
+<div class="commons">
+  <div class="section-eyebrow commons-eyebrow">Open by design</div>
+  <h2>How the commons stays a commons</h2>
+  <ul class="commons-list">
+    <li>Code is open source on GitHub, anyone can read it, fork it, or point out what's broken.</li>
+    <li>Sandbar data is released under an open geodata license, so no one, including us, can lock it up later.</li>
+    <li>No monetization: the pub tab and any prizes come from local sponsorship, not user data.</li>
+    <li>Every contributor's loops are attributed to them, on the map, permanently.</li>
+    <li>Decisions about the project happen in the open: issues, not backroom calls.</li>
+    <li>Built to hand off: if a local group wants to steward this long-term, it's built to be handed over.</li>
+  </ul>
+</div>
+</div>
+
+<section>
+  <div class="section-eyebrow">Get in touch</div>
+  <h2>Say hello</h2>
+  <p style="max-width:56ch; color:#3C433F; font-size:15px;">Questions about the nonprofit structure, the data license, or how to get involved as a steward? Reach out directly.</p>
+  <div style="margin-top:20px;">
+    <a class="btn btn-primary" href="mailto:robillard.matthew22@gmail.com">Say Hello</a>
+    <a class="btn btn-secondary" href="https://github.com/MJRobillard/CommonShoal">GitHub Repo</a>
+  </div>
+  <p style="margin-top:18px; font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--muted);">
+    Matt Robillard &middot; <a href="https://mjrobillard.com" style="color:var(--depth);">mjrobillard.com</a> &middot; robillard.matthew22@gmail.com &middot; (510) 220-9685
+  </p>
+</section>
+
+<footer>
+  <div>
+    <div class="wordmark" style="font-size:15px;">COMMON <span>SHOAL</span></div>
+    <div class="foot-note">A community-run, nonprofit mapping project for Oxford, Maryland boaters and paddlers. This page is an early concept demo: the loop-claiming game and live data feed shown here are illustrative, not live.</div>
+  </div>
+  <div class="footer-links">
+    <a href="index.html">Pitch page</a>
+    <a href="https://github.com/MJRobillard/CommonShoal">GitHub</a>
+    <a href="mailto:robillard.matthew22@gmail.com">robillard.matthew22@gmail.com</a>
+  </div>
+</footer>
+
+</body>
+</html>

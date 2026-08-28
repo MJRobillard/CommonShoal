@@ -255,6 +255,8 @@
     gap: 28px;
   }
   @media (max-width:900px){ .rule{grid-template-columns:1fr;} }
+  .rule-two{ grid-template-columns: repeat(2, 1fr); }
+  @media (max-width:900px){ .rule-two{grid-template-columns:1fr;} }
   .rule-card{
     border-top: 2px solid var(--navy-deep);
     padding-top: 14px;
@@ -328,33 +330,6 @@
   .stat-tile-accent .stat-tile-num{ color: var(--buoy); }
   .stat-tile-accent .stat-tile-label{ color: var(--buoy); }
 
-  .commons{
-    background: var(--navy-deep);
-    color: var(--paper);
-    border-radius: 12px;
-    padding: 40px 6vw;
-    margin: 0 6vw;
-    max-width: 1180px;
-    margin-left:auto; margin-right:auto;
-  }
-  .commons h2{ color: var(--paper); }
-  .commons-eyebrow{ color: #8FD3B0; }
-  .commons-list{
-    list-style:none; padding:0; margin:0;
-    display:grid; grid-template-columns: 1fr 1fr; gap: 18px 40px;
-  }
-  @media (max-width:900px){ .commons-list{grid-template-columns:1fr;} }
-  .commons-list li{
-    font-size:14.5px;
-    color:#D9E2DE;
-    padding-left: 18px;
-    position:relative;
-  }
-  .commons-list li:before{
-    content:"\2022";
-    position:absolute; left:0; color:#8FD3B0;
-  }
-
   footer{
     padding: 40px 6vw 60px;
     max-width: 1180px;
@@ -407,19 +382,6 @@
   }
 
   /* ---- timeline ---- */
-  .timeline-badge{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 999px;
-    display:inline-block;
-  }
-  .timeline-badge.now{ background: var(--depth); color:#fff; }
-  .timeline-badge.next{ background: var(--paper-line); color: var(--navy-deep); }
-  .rule-card .timeline-badge{ margin-bottom: 10px; }
-
   /* ---- possible future features ---- */
   .future-grid{
     display:grid;
@@ -459,17 +421,18 @@
     <div class="wordmark">COMMON <span>SHOAL</span></div>
     <div class="tagline-tiny">Oxford, Maryland &middot; Tred Avon &amp; Choptank</div>
   </div>
-  <div class="tagline-tiny">Demo &middot; v0.1</div>
+  <div class="tagline-tiny"><a href="about.html" style="color:var(--depth);">About the project</a></div>
 </header>
 
 <div class="chart-bg">
 <section class="hero">
   <div>
-    <h1>You don't need to own the whole cove. You just need the tightest claim around the sandbars, until they move.</h1>
-    <div class="nonprofit-badge"><span class="dot"></span>Nonprofit &middot; open source &middot; run by the community</div>
+    <h1>Claim the Water.</h1>
+    <p class="lede">Turn your track into territory. Circle ground to take it, trace tighter to carve it out, and let the live map build itself.</p>
+    <a href="about.html" style="text-decoration:none;"><div class="nonprofit-badge"><span class="dot"></span>Nonprofit &middot; Open Source &middot; Community-Run</div></a>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#involved">Get involved</a>
-      <a class="btn btn-secondary" href="#rules">How it works</a>
+      <a class="btn btn-primary" href="#involved">Join the Fleet</a>
+      <a class="btn btn-secondary" href="#rules">View the Rules</a>
     </div>
   </div>
 
@@ -532,28 +495,23 @@
 
 <section id="rules">
   <div class="section-eyebrow">The mechanic</div>
-  <h2>Small beats sprawling</h2>
-  <div class="rule">
+  <h2>The Game</h2>
+  <div class="rule rule-two">
     <div class="rule-card">
       <div class="rule-num">01</div>
-      <h3>Close a loop</h3>
-      <p>Your boat's track is the pen. Circle a stretch of water, around a shoal, a channel edge, wherever you think the bottom's changed, and closing the loop claims it.</p>
+      <h3>Claim</h3>
+      <p>Circle a stretch of water. Closing your loop locks down the territory on the map.</p>
     </div>
     <div class="rule-card">
       <div class="rule-num">02</div>
-      <h3>Small beats sprawling</h3>
-      <p>A tight, precise claim can't be swallowed by a bigger loop drawn around it. At most, the big loop takes the open water around your ground, never the ground itself. Trace tighter than an existing claim and you carve that piece out for yourself, at reduced points.</p>
-    </div>
-    <div class="rule-card">
-      <div class="rule-num">03</div>
-      <h3>Holds until it's proven wrong</h3>
-      <p>Claims run on a long clock, but any boater who finds open water where a claim says there's a bar can report it. Enough reports and the ground opens back up. That's how the map tracks a bar that's actually moved.</p>
+      <h3>Carve</h3>
+      <p>Trace a tighter loop inside an existing claim to carve that ground out for yourself.</p>
     </div>
   </div>
   <div class="stage-row">
     <div class="stage">
       <div class="stage-head">
-        <span class="stage-name">Trace inside a claim</span>
+        <span class="stage-name">Tighter loop carves ground</span>
         <span class="stage-tag">carves in</span>
       </div>
       <svg id="svg-a" viewBox="0 0 460 320"></svg>
@@ -564,7 +522,7 @@
     </div>
     <div class="stage">
       <div class="stage-head">
-        <span class="stage-name">Trace around a claim</span>
+        <span class="stage-name">Wider loop can't swallow it</span>
         <span class="stage-tag">can't swallow it</span>
       </div>
       <svg id="svg-b" viewBox="0 0 460 320"></svg>
@@ -577,39 +535,17 @@
   <p style="margin-top:16px;"><a class="btn btn-secondary" href="how-it-works.html">Open the full-size version &rarr;</a></p>
 </section>
 
-<section id="timeline">
-  <div class="section-eyebrow">Where this stands</div>
-  <h2>Project timeline</h2>
-  <div class="rule">
-    <div class="rule-card">
-      <span class="timeline-badge now">Now</span>
-      <h3>Demo</h3>
-      <p>The pitch page, mobile mockup, drawing tool, and this mechanic explainer, proving the concept before writing any real backend.</p>
-    </div>
-    <div class="rule-card">
-      <span class="timeline-badge now">Now</span>
-      <h3>Community outreach</h3>
-      <p>Talking to local boaters, the art shop, the pub, and the state aquatic and natural resources researchers who'd actually use a live shoal map.</p>
-    </div>
-    <div class="rule-card">
-      <span class="timeline-badge next">Next</span>
-      <h3>Real build</h3>
-      <p>Live GPS tracking, loop-closure detection, and a realtime backend for expiring claims, once outreach says it's worth building.</p>
-    </div>
-  </div>
-</section>
-
 <section>
   <div class="section-eyebrow">Not committed to any of this</div>
-  <h2>Possible future features</h2>
+  <h2>Town Rivalries</h2>
   <div class="future-grid">
     <div class="future-card">
-      <h3>Team mode</h3>
-      <p>Claim and defend ground as a crew instead of solo.</p>
+      <h3>Crews</h3>
+      <p>Claim and defend shallow ground as a team instead of solo.</p>
     </div>
     <div class="future-card">
       <h3>Oxford vs. Bellevue</h3>
-      <p>A standing rivalry mode between the two towns on either side of the Tred Avon, tallying whose side holds more of the river.</p>
+      <p>A standing rivalry for control of the Tred Avon.</p>
     </div>
   </div>
 </section>
@@ -618,25 +554,16 @@
   <div class="why-grid">
     <div>
       <div class="section-eyebrow">Why it matters</div>
-      <h2>The chart is always a little bit wrong</h2>
-      <p>NOAA still charts this stretch on sheet 12266: a shoal off Benoni Point at the river's mouth, abrupt shoaling up at Easton Point. Soundings get revised on a survey's schedule, not the tide's. Sandbars here shift with every strong blow, and finding out the hard way is how keels get bent. The people who already know the current truth are out there every week, hobbyist boaters, crabbers, the sailing club. This just gives that knowledge a place to live, updated by the hour instead of by the season.</p>
-      <p>None of this is monetized. No ads, no paid tiers, no data resale, the map exists because the community needs it and keeps it honest.</p>
+      <h2>NOAA maps the past. You map the present.</h2>
+      <p>Official charts update on a survey's schedule, not the tide's. Sandbars on the Tred Avon &amp; Choptank shift with every strong blow, leaving keels and kayak hulls vulnerable alike. Every time you play the game, your track keeps the fleet, paddlers included, safe.</p>
 
       <div class="stat-row">
         <div class="stat-tile stat-tile-accent">
           <div class="stat-tile-num">350</div>
-          <div class="stat-tile-label">Groundings, 2023</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-tile-num">450</div>
-          <div class="stat-tile-label">Falls overboard</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-tile-num">400</div>
-          <div class="stat-tile-label">Capsizings</div>
+          <div class="stat-tile-label">Groundings per year</div>
         </div>
       </div>
-      <p class="foot-note" style="margin-top:10px;">U.S. Coast Guard, nationwide recreational boating accidents by type. Sources: <a href="https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp3/CPB3_C14_WEB.pdf" style="color:var(--depth);">NOAA Coast Pilot 3</a>, <a href="https://uscgboating.org/library/accident-statistics/Recreational-Boating-Statistics-2023-Ch2.pdf" style="color:var(--depth);">2023 USCG Recreational Boating Statistics</a>.</p>
+      <p class="foot-note" style="margin-top:10px;">U.S. Coast Guard, nationwide recreational boating accidents by type. Source: <a href="https://uscgboating.org/library/accident-statistics/Recreational-Boating-Statistics-2023-Ch2.pdf" style="color:var(--depth);">2023 USCG Recreational Boating Statistics</a>.</p>
     </div>
     <div class="quote-block">
       NOAA already runs a water-level monitor at this river's mouth and named the Choptank complex a federal Habitat Focus Area back in 2014. A live, crowdsourced shoal map is exactly the kind of dataset that effort can't generate on its own, but could absolutely put to use.
@@ -644,28 +571,13 @@
   </div>
 </section>
 
-<div style="padding: 0 6vw;">
-<div class="commons">
-  <div class="section-eyebrow commons-eyebrow">Open by design</div>
-  <h2>How the commons stays a commons</h2>
-  <ul class="commons-list">
-    <li>Code is open source on GitHub, anyone can read it, fork it, or point out what's broken.</li>
-    <li>Sandbar data is released under an open geodata license, so no one, including us, can lock it up later.</li>
-    <li>No monetization: the pub tab and any prizes come from local sponsorship, not user data.</li>
-    <li>Every contributor's loops are attributed to them, on the map, permanently.</li>
-    <li>Decisions about the project happen in the open: issues, not backroom calls.</li>
-    <li>Built to hand off: if a local group wants to steward this long-term, it's built to be handed over.</li>
-  </ul>
-</div>
-</div>
-
 <section id="involved">
   <div class="section-eyebrow">Join in</div>
-  <h2>This starts with people on the water, not code</h2>
-  <p style="max-width:56ch; color:#3C433F; font-size:15px;">Before this goes further, it needs boaters who'll actually try it and tell us what's wrong with it. If that's you, or you know the right person at the marina, the yacht club, or the pub, say hello.</p>
+  <h2>Get on the water first.</h2>
+  <p style="max-width:56ch; color:#3C433F; font-size:15px;">We need local boaters, kayakers, and paddlers in Oxford to test early tracks before backend launch. If that's you, or you know the right person at the marina, the yacht club, the outfitter, or the pub, say hello.</p>
   <div class="cta-row" style="margin-top:20px;">
-    <a class="btn btn-primary" href="mailto:robillard.matthew22@gmail.com">Say hello</a>
-    <a class="btn btn-secondary" href="https://github.com/MJRobillard/CommonShoal">View the repo</a>
+    <a class="btn btn-primary" href="mailto:robillard.matthew22@gmail.com">Say Hello</a>
+    <a class="btn btn-secondary" href="https://github.com/MJRobillard/CommonShoal">GitHub Repo</a>
   </div>
   <p style="margin-top:18px; font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--muted);">
     Matt Robillard &middot; <a href="https://mjrobillard.com" style="color:var(--depth);">mjrobillard.com</a> &middot; robillard.matthew22@gmail.com &middot; (510) 220-9685
@@ -675,9 +587,10 @@
 <footer>
   <div>
     <div class="wordmark" style="font-size:15px;">COMMON <span>SHOAL</span></div>
-    <div class="foot-note">A community-run, nonprofit mapping project for Oxford, Maryland boaters. This page is an early concept demo: the loop-claiming game and live data feed shown here are illustrative, not live.</div>
+    <div class="foot-note">This page is an early concept demo: the loop-claiming game and live data feed shown here are illustrative, not live. See the <a href="about.html" style="color:var(--depth);">About page</a> for the nonprofit and open source details.</div>
   </div>
   <div class="footer-links">
+    <a href="about.html">About</a>
     <a href="https://github.com/MJRobillard/CommonShoal">GitHub</a>
     <a href="https://mjrobillard.com">mjrobillard.com</a>
     <a href="mailto:robillard.matthew22@gmail.com">robillard.matthew22@gmail.com</a>
